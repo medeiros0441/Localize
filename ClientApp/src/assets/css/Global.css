@@ -1,0 +1,103 @@
+ 
+ .container-erro {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
+}
+.h1-erro {
+    color: #333;
+}
+.p-erro {
+    color: #666;
+}
+.error-list {
+    text-align: left;
+    margin-top: 20px;
+}
+.error-list li {
+    margin-bottom: 10px;
+}
+.error-message {
+    color: #ff6347;
+    font-weight: bold;
+} 
+    
+/* Aplicação da fonte Montserrat apenas para elementos com a classe .font-montserrat */
+.font-montserrat {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.6;
+}
+
+/* Exemplo de estilo adicional para elementos específicos */
+.font-montserrat h1, .font-montserrat h2, .font-montserrat h3, 
+.font-montserrat h4, .font-montserrat h5, .font-montserrat h6 {
+    font-weight: 700; /* Negrito para cabeçalhos */
+}
+
+.font-montserrat p {
+    margin-bottom: 1.5em;
+}
+
+.font-montserrat a {
+    text-decoration: none;
+}
+
+.font-montserrat a:hover {
+    text-decoration: underline;
+}
+ 
+
+.wrapper    {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.content {
+    flex: 1;
+  }
+
+
+
+  .custom-shape-divider-top-1708368195 {
+    
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    transform: rotate(180deg);
+}
+
+.custom-shape-divider-top-1708368195 svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 110px;
+    transform: rotateY(180deg);
+}
+
+.custom-shape-divider-top-1708368195 .shape-fill {
+    fill: #0D1B2A;
+}
+
+.custom-shape-divider-bottom-1708368458 {
+   
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.custom-shape-divider-bottom-1708368458 svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 102px;
+}
+
+.custom-shape-divider-bottom-1708368458 .shape-fill {
+    fill: #0D1B2A;
+}  
+
+
+ 
