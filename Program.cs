@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+ 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
     ContentRootPath = Directory.GetCurrentDirectory(),
-    WebRootPath = "ClientApp/build"
+    WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot") // Use Path.Combine para garantir o caminho correto
 });
 
 // Configura os serviços
