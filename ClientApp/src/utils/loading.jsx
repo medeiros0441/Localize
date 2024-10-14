@@ -5,8 +5,7 @@ export default function loading(status, container) {
     // Se o container for uma string, assume-se que é o ID do elemento
     targetContainer = document.getElementById(container);
     if (!targetContainer) {
-      console.error(`Container com ID '${container}' não encontrado.`);
-      return;
+      targetContainer = document.getElementById("root");
     }
   } else if (container instanceof HTMLElement) {
     // Se o container for um elemento HTMLElement, utiliza diretamente

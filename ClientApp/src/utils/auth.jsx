@@ -3,7 +3,7 @@ import request from './api';
 import { useState, useEffect } from 'react';
 
 export const useAuthentication = () => {
-  const [cookieValue, setCookieValue] = useState(() => getCookie('authentication'));
+  const [cookieValue, setCookieValue] = useState(getCookie('authentication') || null); // Define o estado inicial com o valor do cookie
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -26,11 +26,11 @@ export const useAuthentication = () => {
       }
     };
 
-    // Executa a verificação apenas se o valor do cookie for null (ou seja, não definido)
+    // Executa a verificação apenas se o valor do cookie for null
     if (cookieValue === null) {
       checkAuthentication();
     }
-  }, [cookieValue]);
+  }, [cookieValue]); // O hook só será executado se cookieValue mudar
 
-  return cookieValue;
+  return cookieValue; // Retorna o valor atual do cookie
 };

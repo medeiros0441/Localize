@@ -1,80 +1,173 @@
+using System.Collections.Generic;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using ProjectLocalize.DTOs;
 using ProjectLocalize.Services;
-using System.Threading.Tasks;
-
-[ApiController]
-[Route("api/[controller]")]
-public class PublicController : ControllerBase
+using ProjectLocalize.Utils;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;  
+namespace ProjectLocalize.Controllers
 {
-    private readonly UsuarioService _usuarioService;
-
-    public PublicController(UsuarioService usuarioService)
+    [AllowAnonymous]
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PublicController : BaseController
     {
-        _usuarioService = usuarioService;
-    }
 
-    // POST: api/Public/Login
-    [HttpPost("Login")]
-    public IActionResult Login([FromBody] UsuarioDTO model)
-    {
-        if (ModelState.IsValid)
+        public PublicController(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, UsuarioService usuarioService)
+            : base(httpContextAccessor, configuration, usuarioService)
+        {        }
+
+        [HttpPost("Logout")]
+        public IActionResult Logout() // Removido o async
         {
-            var usuarioDTO = _usuarioService.Authenticate(model.Email, model.Password);
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok(new
+            {
+              
+                message = "Logout realizado com sucesso."
+            });
+        }
+
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] UsuarioDTO model) // Removido async
+        {
+            if (ValidationHelper.IsNullOrEmpty(model.Email) || 
+                !ValidationHelper.IsValidEmail(model.Email) || 
+                ValidationHelper.IsNullOrEmpty(model.Senha))
+            {
+                Console.WriteLine("Login falhou: Dados inválidos.");
+                return BadRequest(new
+                {
+                   
+                    message = "Solicitação inválida. Verifique as informações fornecidas."
+                });
+            }
+
+            var usuarioDTO = _usuarioService.Authenticate(model.Email, model.Senha);
             if (usuarioDTO != null)
             {
-                // Retorne um token ou informações de autenticação conforme sua lógica
-                // Exemplo: retornar o usuário autenticado como JSON
-                return Ok(usuarioDTO);
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, usuarioDTO.Id.ToString()),
+                    new Claim(ClaimTypes.Email, usuarioDTO.Email)
+                };
+
+                var token = _tokenManager.GenerateToken(new ClaimsIdentity(claims));
+
+
+                return Ok(new
+                {
+                  
+                    message = "Login realizado com sucesso.",
+                    token,
+                    data = usuarioDTO
+                });
             }
             else
             {
-                return Unauthorized("Invalid login attempt.");
+                return BadRequest(new
+                {
+                   
+                    message = "Tentativa de login inválida."
+                });
             }
         }
 
-        return BadRequest("Invalid request.");
-    }
-
-    // GET: api/Public/CheckAuthentication
-    [HttpGet("CheckAuthentication")]
-    public IActionResult CheckAuthentication()
-    {
-        if (User.Identity.IsAuthenticated)
+       [HttpGet("CheckAuthentication")]
+        // Método CheckAuthentication refatorado
+        public IActionResult CheckAuthentication() 
         {
-            return Ok(new { IsAuthenticated = true, UserName = User.Identity.Name });
-        }
-        else
-        {
-            return Ok(new { IsAuthenticated = false });
-        }
-    }
-
-    // POST: api/Public/Cadastro
-    [HttpPost("Cadastro")]
-    public IActionResult Cadastro([FromBody] UsuarioDTO model)
-    {
-        if (ModelState.IsValid)
-        {
-            var usuarioDTO = new UsuarioDTO
+            // Verifica se o usuário está autenticado com base no ID do usuário da sessão
+            if (id_usuario_session == Guid.Empty)
             {
-                Nome = model.Username,
-                Email = model.Email,
-                Senha = model.Password
+                return Ok(new { message = "Usuário não autenticado." });
+            }
+
+            // Se chegou aqui, significa que o usuário está autenticado
+            var response = new
+            {
+                authenticated = true,
+                message = "Usuário autenticado.",
+                user = new
+                {
+                    userId = id_usuario_session,
+                    email = User.FindFirst(ClaimTypes.Email)?.Value // Se o e-mail estiver disponível no token
+                }
             };
 
-            var result = _usuarioService.CreateUsuario(usuarioDTO);
-            if (result != null)
-            {
-                 
-                return CreatedAtAction(nameof(Cadastro), new { id = result.Id }, result);
-            }
-            else
-            {
-                return BadRequest("Failed to create user.");
-            }
+            return Ok(response);
         }
 
-        return BadRequest("Invalid request.");
+
+
+        [HttpGet("AcessoNegado")]
+        public IActionResult AcessoNegado()
+        {
+            return Unauthorized(new
+            {
+               
+                message = "Acesso negado. Você não tem permissão para acessar este recurso."
+            });
+        }
+
+        [HttpPost("Cadastro")]
+        public IActionResult Cadastro([FromBody] UsuarioDTO model)
+        {
+            if (model == null || !ModelState.IsValid || 
+                ValidationHelper.IsNullOrEmpty(model.Email) || 
+                !ValidationHelper.IsValidEmail(model.Email) || 
+                ValidationHelper.IsNullOrEmpty(model.Senha))
+            {
+                return BadRequest(new
+                {
+                   
+                    message = "Dados inválidos. Verifique as informações fornecidas."
+                });
+            }
+
+            try
+            {
+                if (_usuarioService.EmailExiste(model.Email))
+                {
+                    return BadRequest(new
+                    {
+                       
+                        message = "E-mail já cadastrado. Utilize outro e-mail."
+                    });
+                }
+
+                var usuarioCriado = _usuarioService.CreateUsuario(new UsuarioDTO
+                {
+                    Nome = model.Nome,
+                    Email = model.Email,
+                    Senha = model.Senha
+                });
+
+                return Ok(new
+                {
+                  
+                    message = "Usuário cadastrado com sucesso.",
+                    data = new
+                    {
+                        usuarioCriado.Id,
+                        usuarioCriado.Nome,
+                        usuarioCriado.Email
+                    }
+                });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new
+                {
+                   
+                    message = "Ocorreu um erro inesperado. Tente novamente mais tarde."
+                });
+            }
+        }
     }
 }

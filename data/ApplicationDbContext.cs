@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectLocalize.Models;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ProjectLocalize.Data
 {
@@ -33,5 +37,38 @@ namespace ProjectLocalize.Data
 
             // Outras configurações podem ser adicionadas aqui
         }
+
+        public override int SaveChanges()
+        {
+            // Trata as datas de criação e atualização antes de salvar
+            SetEntityDates();
+
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            // Trata as datas de criação e atualização antes de salvar
+            SetEntityDates();
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+       private void SetEntityDates() 
+       {
+            var entities = ChangeTracker.Entries()
+                .Where(e => e.Entity is Custom && (e.State == EntityState.Added || e.State == EntityState.Modified));
+
+            foreach (var entity in entities) {
+                var customEntity = (Custom)entity.Entity;
+
+                if (entity.State == EntityState.Added) {
+                    customEntity.SetInsertDate(); // Define a data de inserção
+                }
+
+                customEntity.UpdateTimestamp(); // Atualiza a data de modificação
+            }
+        }
+
     }
 }

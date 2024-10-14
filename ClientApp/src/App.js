@@ -1,15 +1,17 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Base from './components/Base'; // Importe seu componente Base aqui
-import RouterConfig from './router'; // Importe o componente Router aqui
+import Base from './components/Base';
+import RouterConfig from './router';
+import { AuthProvider } from './utils/AuthProvider'; // Importar o AuthProvider
 
-const App = ({ isCliente = false }) => (
-  <Router>
-    <Base isCliente={isCliente}>
-      <RouterConfig />
-    </Base>
-  </Router>
+const App = () => (
+  <AuthProvider>
+    <Router>
+      <Base>
+        <RouterConfig />
+      </Base>
+    </Router>
+  </AuthProvider>
 );
 
 export default App;

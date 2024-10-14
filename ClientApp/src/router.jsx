@@ -1,18 +1,27 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthentication } from './utils/auth';
+import { useAuth } from '@utils/AuthProvider'; 
 
 // Componentes
-import Login from 'src/components/containers/default/login';
-import Cadastro from 'src/components/containers/default/cadastro';
-import Erro from 'src/components/erro';
-import ClienteForm from 'src/components/containers/cliente/ClienteForm';
-import ClienteLista from 'src/components/containers/cliente/ClienteLista';
-import CobrancaForm from 'src/components/containers/cobranca/CobrancaForm';
-import CobrancaLista from 'src/components/containers/cobranca/CobrancaLista';
+import Login from '@default/login';
+import Cadastro from '@default/cadastro';
+import Erro from '@components/erro';
+
+import ClienteForm from '@cliente/ClienteForm';
+import ClienteLista from '@cliente/ClienteLista';
+import ClienteView from '@cliente/ClienteView';
+
+import CobrancaForm from '@cobranca/CobrancaForm';
+import CobrancaView from '@cobranca/CobrancaView';
+import CobrancaLista from '@cobranca/CobrancaLista';
+
+// Novos componentes para usuário
+import UsuarioForm from '@usuario/UsuarioForm';
+import UsuarioLista from '@usuario/UsuarioLista';
+import UsuarioView from '@usuario/UsuarioView';
 
 const Router = () => {
-  const isAuthenticated = useAuthentication();
+  const { isAuthenticated } = useAuth(); // Obtém o estado de autenticação
 
   return (
     <Routes>
@@ -29,23 +38,23 @@ const Router = () => {
         element={<Erro title="Página Não Encontrada" descricao="A página que você está procurando não existe." />}
       />
 
-      {/* Rotas privadas */}
-      <Route
-        path="/cliente/"
-        element={isAuthenticated  === true ? <ClienteForm /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/cliente/form"
-        element={isAuthenticated === true ? <ClienteLista /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/cobranca"
-        element={isAuthenticated  === true ? <CobrancaForm /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/cobranca/form"
-        element={isAuthenticated  === true ? <CobrancaLista /> : <Navigate to="/login" />}
-      />
+      {/* Rotas privadas para Cliente */}
+      <Route path="/cliente/" element={isAuthenticated ? <ClienteLista /> : <Navigate to="/login" />} />
+      <Route path="/cliente/create/" element={isAuthenticated ? <ClienteForm /> : <Navigate to="/login" />} />
+      <Route path="/cliente/edit/:id" element={isAuthenticated ? <ClienteForm /> : <Navigate to="/login" />} />
+      <Route path="/cliente/view/:id" element={isAuthenticated ? <ClienteView /> : <Navigate to="/login" />} />
+
+      {/* Rotas privadas para Cobrança */}
+      <Route path="/cobranca/" element={isAuthenticated ? <CobrancaLista /> : <Navigate to="/login" />} />
+      <Route path="/cobranca/edit/:id" element={isAuthenticated ? <CobrancaForm /> : <Navigate to="/login" />} />
+      <Route path="/cobranca/create/:id_cliente?" element={isAuthenticated ? <CobrancaForm /> : <Navigate to="/login" />} />
+      <Route path="/cobranca/view/:id" element={isAuthenticated ? <CobrancaView /> : <Navigate to="/login" />} />
+
+      {/* Rotas privadas para Usuário */}
+      <Route path="/usuario/" element={isAuthenticated ? <UsuarioLista /> : <Navigate to="/login" />} />
+      <Route path="/usuario/create/" element={isAuthenticated ? <UsuarioForm /> : <Navigate to="/login" />} />
+      <Route path="/usuario/edit/:id" element={isAuthenticated ? <UsuarioForm /> : <Navigate to="/login" />} />
+      <Route path="/usuario/view/:id" element={isAuthenticated ? <UsuarioView /> : <Navigate to="/login" />} />
     </Routes>
   );
 };

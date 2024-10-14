@@ -1,93 +1,93 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import request from 'src/utils/api';
 import alerta from 'src/utils/alerta';
 import loading from 'src/utils/loading';
+import Formulario from '@objetos/Formulario';
+import { useAuth } from 'src/utils/AuthProvider';
+import { setCookie } from 'src/utils/storage';
+
 const LoginForm = () => {
+  const { setIsAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const navigate = useNavigate();  // Use useNavigate hook
+  const navigate = useNavigate();
 
   const validateForm = () => email.trim() !== '' && senha.trim() !== '';
 
   const handleLogin = async () => {
     if (!validateForm()) {
-      alerta('Preencha todos os campos!', 2);
+      alerta('Preencha todos os campos!', 2,'form_login');
       return;
     }
-    try {
-      loading(true, 'form_login');
 
-      const response = await request('usuarios/login/', "POST", { email, senha });
-      if (response.sucess) {
-        navigate('/usuarios');  // Redireciona o usuário
-      } else {
-        alerta(response.message, 2, "form_login");
-      }
+      try {
+        loading(true, 'form_login');
+        const response = await request('public/login/', 'POST', { email, senha });
+        
+        if (response.sucesso) {
+            // Armazena o token de autenticação no cookie
+            setCookie('authToken', response.token, { expires: 1 }); // Define o cookie para expirar em 1 dia
+            setCookie('authentication','true');
+            setIsAuthenticated("true"); // Atualiza o estado no contexto
+            navigate('/cliente'); // Redireciona para a página de usuários
+        } else {
+            alerta(response.message, 2, 'form_login');
+        }
     } catch (error) {
-      alerta(error, 2, 'form_login');
+        alerta(error.message || 'Erro ao fazer login', 2, 'form_login');
     } finally {
-      loading(false, 'form_login');
+        loading(false, 'form_login');
     }
   };
 
+  const handleRegister = () => {
+    // Redireciona para a página de cadastro
+    navigate('/cadastro');
+  };
+
   return (
-    <>
+    <div id="form_login" className='container mx-auto'>
 
-      <form id="form_login" className="form-signin container mx-auto">
-        <div className="px-sm-2 p-4 my-3 modal modal-signin position-static d-block align-items-center">
-          <div className="modal-dialog m-0 m-sm-auto">
-            <div className="modal-content mb-2 bg-body rounded-3 border">
-              <div className="modal-header">
-                <div className="d-flex align-items-center">
-                  <i width="32" height="32" className="bi mb-1 bi-person"></i>
-                  <h1 className="text-center mb-1 ms-2 fw-normal small text-dark mx-auto">Acessar Conta</h1>
-                </div>
-              </div>
-              <div className="modal-body">
-                <div className="form-floating mb-2">
-                  <input
-                    type="email"
-                    className="form-control"
-                    autoComplete="off"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <label htmlFor="email">E-mail</label>
-                </div>
-
-                <div className="form-floating mb-2">
-                  <input
-                    type="password"
-                    className="form-control"
-                    autoComplete="off"
-                    id="senha"
-                    name="senha"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                  />
-                  <label htmlFor="senha">Senha</label>
-                </div>
- 
-                <div className="col-12 mb-4">
-                  <a tabIndex="8" className="ms-auto link-secondary small mx-auto rounded-2" href="/cadastro">
-                    Cadastre-se
-                  </a>
-                  <button
-                    id="submit-btn"
-                    className="btn btn-primary float-end me-2 btn-md"
-                    type="button"
-                    onClick={handleLogin}
-                  >
-                    Entrar
-                  </button>
-                </div>
-              </div>
-            </div>
+    <Formulario
+      headerIcon="person"
+      headerTitle="Acessar Conta"
+      isDark={false}
+      formBody={
+        <>
+          {/* Campo de e-mail */}
+          <div className="form-floating mb-2">
+            <input
+              type="email"
+              className="form-control"
+              autoComplete="off"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <label htmlFor="email">E-mail</label>
           </div>
-        </div>
-      </form>
-    </>
+
+          {/* Campo de senha */}
+          <div className="form-floating mb-2">
+            <input
+              type="password"
+              className="form-control"
+              autoComplete="off"
+              id="senha"
+              name="senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+            />
+            <label htmlFor="senha">Senha</label>
+          </div>
+        </>
+      }
+      footerLeftButtonText="Cadastre-se"
+      footerLeftButtonAction={handleRegister}
+      footerRightButtonText="Entrar"
+      footerRightButtonAction={handleLogin}
+    />
+    </div>
   );
 };
 

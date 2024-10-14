@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectLocalize.Models
 {
-    public class Usuario
+    public class Usuario : Custom
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();

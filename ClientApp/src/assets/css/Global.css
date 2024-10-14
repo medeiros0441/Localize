@@ -1,4 +1,40 @@
- 
+/* Estilos para a barra de rolagem vertical */
+::-webkit-scrollbar {
+    width: 12px; /* Largura da barra de rolagem vertical */
+    height: 12px; /* Largura da barra de rolagem vertical */
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px; /* Arredondamento do polegar */
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: #0D1B2A; /* Cor do polegar da barra de rolagem */
+}
+
+/* Estilos para a barra de rolagem horizontal */
+::-webkit-scrollbar-horizontal {
+    height: 12px; /* Altura da barra de rolagem horizontal */
+    background-color: #F5F5F5; /* Cor de fundo da barra de rolagem horizontal */
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+    height: 12px; /* Largura da barra de rolagem vertical */
+    width  : 10px; /* ajuste a altura conforme necessário */
+    border-radius: 15px; /* Arredondamento do polegar horizontal */
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: #ffffff; /* Cor do polegar da barra de rolagem horizontal */
+}
+
+/* Para Firefox */
+.scroll {
+     width  : 100px; /* ajuste a altura conforme necessário */
+    scrollbar-width: thin; /* Largura da barra de rolagem (thin, auto, none) */
+    scrollbar-color: #0D1B2A #F5F5F5; /* Cor do polegar e do fundo (thumb track) */
+}
+.no-scroll {
+    max-height: 300px; /* ajuste a altura conforme necessário */
+    overflow: hidden; /* desativa o scroll */
+}
+
  .container-erro {
     max-width: 600px;
     margin: 0 auto;
@@ -97,7 +133,66 @@
 
 .custom-shape-divider-bottom-1708368458 .shape-fill {
     fill: #0D1B2A;
-}  
+}   
 
 
- 
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .tooltip-box {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    background-color: black;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    z-index: 100;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  
+  .tooltip-container:hover .tooltip-box {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  .tooltip-box.top {
+    bottom: 100%;
+    transform: translateX(-50%);
+  }
+  
+  .tooltip-box.right {
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+  }
+  
+  .tooltip-box.left {
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+  }
+  
+  .tooltip-box.bottom {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  /* Ajuste para btn-group */
+  .btn-group .tooltip-container {
+    display: inline-block;
+    margin: 0;
+    position: relative;
+  }
+  
+  .btn-group .tooltip-box {
+    white-space: nowrap;
+    min-width: 50px; /* ajustável conforme necessário */
+  }
+  

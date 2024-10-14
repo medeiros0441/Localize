@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectLocalize.Models
 {
-    public class Cobranca
+    public class Cobranca :Custom
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

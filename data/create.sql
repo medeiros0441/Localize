@@ -1,5 +1,7 @@
 -- Active: 1723815847137@@127.0.0.1@3306
+-- apesar do create, o gerenciamento do db está sendo feito atraves do EF (Entity Framework)
 
+s
 CREATE TABLE Usuario (
     Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     Nome VARCHAR(255) NOT NULL,

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations; // Importar para validação
 
 namespace ProjectLocalize.DTOs
 {
-    public class UsuarioDTO
+    public class UsuarioDTO  :CustomDTO
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Nome { get; set; } = string.Empty;

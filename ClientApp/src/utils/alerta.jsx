@@ -1,4 +1,4 @@
-import { Modal } from 'bootstrap';  // Importação do modal do Bootstrap
+import {  Toast } from 'bootstrap';  // Importação do modal do Bootstrap
 
 function showAlert(type, text, containerId) {
   const container = document.getElementById(containerId) || document.getElementById('id_alert_container');
@@ -22,9 +22,10 @@ function showAlert(type, text, containerId) {
 
   // Create the alert div
   const alertDiv = document.createElement('div');
-  alertDiv.classList.add('alert', alertClass, 'alert-dismissible', 'fade', 'show', 'mt-2', 'bt-2');
+  alertDiv.classList.add('alert', alertClass, 'alert-dismissible', 'fade', 'show', 'mt-2','mx-2', 'bt-2');
   alertDiv.setAttribute('role', 'alert');
-
+  alertDiv.style.whiteSpace = 'normal'; // Permite a quebra de linha no texto
+  alertDiv.style.wordWrap = 'break-word'; // Quebra palavras longas, se necessário
   // Create and add the close button
   const closeButton = document.createElement('button');
   closeButton.classList.add('btn-close');
@@ -75,22 +76,23 @@ function showCustomAlert(text, containerId, time) {
   const toastBody = document.createElement('div');
   toastBody.classList.add('toast-body', 'bg-white', 'rounded-bottom', 'shadow-lg');
   toastBody.innerText = text;
-
+  toastBody.style.whiteSpace = 'normal'; // Permite a quebra de linha no texto
+  toastBody.style.wordWrap = 'break-word'; // Quebra palavras longas, se necessário
   toastHeader.appendChild(strongElement);
   toastHeader.appendChild(buttonClose);
   toastElement.appendChild(toastHeader);
   toastElement.appendChild(toastBody);
   toastContainer.appendChild(toastElement);
 
-  const toastBootstrap = Modal.Toast(toastElement);
-  toastBootstrap.show();
+  const toastBootstrap = new Toast(toastElement); // Instancia o Toast corretamente
+  toastBootstrap.show(); // Exibe o Toast
 
   setTimeout(() => {
     toastContainer.removeChild(toastElement);
   }, time);
 }
 
-export default function alerta(text, type = null, container = false, time = 180000) {
+export default function alerta(text, type = null, container = false, time = 30000) {
   if (type === null) {
     showCustomAlert(text, container, time);
   } else {
