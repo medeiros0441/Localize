@@ -13,6 +13,7 @@ A aplicação web **Localize** foi desenvolvida utilizando **React** para o fron
 - **Frontend:**
   - **React:** Framework utilizado para construir a interface do usuário.
   - **Axios:** Para fazer requisições HTTP à API.
+  - **Bootstrap** Para o desing, das paginas..
 
 ## Funcionalidades
 - **Cadastro e Login:** Permite que os usuários se cadastrem e façam login na aplicação.
