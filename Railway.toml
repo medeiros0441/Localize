@@ -1,0 +1,5 @@
+# Railway.toml
+
+[build]
+command = "dotnet publish ProjectLocalize.csproj -c Release -o out"
+
