@@ -5,14 +5,12 @@ import useClienteModal from './useClienteModal';
 import useConfirmationModal from '@objetos/useConfirmationModal';
 import  ClienteService   from '@service/ClienteService';
 import Alerta from '@utils/alerta';
-import useCobrancaModal from '@cobranca/useCobrancaModal';
 const ClienteLista = () => {
     const [clientes, setClientes] = useState([]);
     const navigate = useNavigate(); // Usando useNavigate para navegação
 
     const { openModal: openClienteModal, ClienteModalComponent } = useClienteModal();
     const { openModal: openConfirmationModal, ConfirmationModalComponent } = useConfirmationModal();
-    const { openModal: openCobrancaModal, CobrancaModalComponent } = useCobrancaModal();
 
     const fetchClientes = useCallback(async () => {
         try {
@@ -136,7 +134,6 @@ const ClienteLista = () => {
                 columns={columns}
                 rows={rows}
             />
-            <CobrancaModalComponent />
             <ClienteModalComponent />
             <ConfirmationModalComponent />
         </div>
